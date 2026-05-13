@@ -1,0 +1,20 @@
+{
+  "faq": [
+    {
+      "question": "Is Smudgy client safe?",
+      "answer": "Yes, Smudgy client is safe because it's open source, has been helped on by many users, and is used by many users."
+    },
+    {
+      "question": "Does this client use my token?",
+      "answer": "Yes, we use your token for API calling only for the official Kirka API."
+    },
+    {
+      "question": "Can I have a custom badge?",
+      "answer": "No, they are given out at random or from giveaways. If you ask, you will be blacklisted."
+    },
+    {
+      "question": "Will I get banned for using Smudgy client?",
+      "answer": "Not that I'm aware of. If Xip flags something, I will take action."
+    }
+  ]
+}
