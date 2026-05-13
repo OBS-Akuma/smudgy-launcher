@@ -5,176 +5,267 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Smudgy Client Launcher</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://obs-akuma.github.io/smudgy-launcher/launcher.css">
+    <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
 
 <div class="launcher">
+
+    <!-- ── TOP BAR ── -->
     <div class="top-bar">
         <div class="logo-area">
             <div class="client-icon">
-                <img src="https://www.smudgy.store/uploads/icon.png" 
-                     alt="Smudgy Client"
+                <img src="https://www.smudgy.store/uploads/icon.png"
+                     alt="Smudgy"
                      onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\'fallback-text\'>S</div>';">
             </div>
             <div class="client-name">smudgy client</div>
         </div>
+
+        <div class="top-bar-divider"></div>
+
+        <div class="top-social-icons">
+            <a class="social-btn" title="Discord" href="#"><i class="fab fa-discord"></i></a>
+            <a class="social-btn" title="GitHub" href="#"><i class="fab fa-github"></i></a>
+            <a class="social-btn" title="Store" href="#"><i class="fas fa-bag-shopping"></i></a>
+        </div>
+
+        <div class="top-bar-spacer"></div>
+
         <div class="search-container">
             <i class="fas fa-search"></i>
-            <input type="text" id="globalSearch" placeholder="Search..">
+            <input type="text" id="globalSearch" placeholder="Search features, tools, clients...">
             <button class="search-clear" id="searchClearBtn"><i class="fas fa-times-circle"></i></button>
         </div>
+
+        <div class="user-pill">
+            <div class="user-avatar"><i class="fas fa-user" style="font-size:0.65rem;"></i></div>
+            <div class="user-name">Guest</div>
+        </div>
+
+        <div class="win-controls">
+            <button class="win-btn" title="Minimize"><i class="fas fa-minus"></i></button>
+            <button class="win-btn close" title="Close"><i class="fas fa-times"></i></button>
+        </div>
     </div>
 
+    <!-- ── BODY ── -->
     <div class="main-layout">
+
+        <!-- ── ICON SIDEBAR ── -->
         <div class="sidebar">
-            <button class="tab-btn active" data-tab="launch">Launch</button>
-            <button class="tab-btn" data-tab="settings">Settings</button>
-            <button class="tab-btn" data-tab="scripts">Scripts</button>
-            <button class="tab-btn" data-tab="activity">Activity</button>
-            <button class="tab-btn" data-tab="features">Features</button>
-            <button class="tab-btn" data-tab="faq">FAQ</button>
-            <button class="tab-btn" data-tab="tools">Tools</button>
-            <button class="tab-btn" data-tab="otherclients">Other Clients</button>
-            <button class="tab-btn" data-tab="credits">Credits</button>
+            <button class="tab-btn active" data-tab="launch" data-label="Launch" title="Launch">
+                <i class="fas fa-play"></i>
+            </button>
+            <button class="tab-btn" data-tab="settings" data-label="Settings" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button class="tab-btn" data-tab="scripts" data-label="Scripts" title="Scripts">
+                <i class="fas fa-code"></i>
+            </button>
+            <button class="tab-btn" data-tab="activity" data-label="Activity" title="Activity">
+                <i class="fas fa-chart-line"></i>
+            </button>
+            <button class="tab-btn" data-tab="features" data-label="Features" title="Features">
+                <i class="fas fa-star"></i>
+            </button>
+            <button class="tab-btn" data-tab="faq" data-label="FAQ" title="FAQ">
+                <i class="fas fa-circle-question"></i>
+            </button>
+            <button class="tab-btn" data-tab="tools" data-label="Tools" title="Tools">
+                <i class="fas fa-wrench"></i>
+            </button>
+            <button class="tab-btn" data-tab="otherclients" data-label="Other Clients" title="Other Clients">
+                <i class="fas fa-layer-group"></i>
+            </button>
+
+            <div class="sidebar-spacer"></div>
+
+            <button class="tab-btn" data-tab="credits" data-label="Credits" title="Credits">
+                <i class="fas fa-heart"></i>
+            </button>
         </div>
 
-        <div class="content-panel">
-            <div id="launch-tab" class="tab-content active">
-                <div class="content-title">Launcher</div>
-                <div class="client-description">
-                    Smudgy Client is a custom Electron-based Kirka.io client focused on advanced UI customization, player cosmetics, quality-of-life features, and social enhancements. It includes animated gradients, custom badges, lobby news, Discord integration, spectate tools, friend pinning, profile customization, CSS theming, in-game HUD improvements, and script/plugin support for a fully personalized experience.
-                </div>
-                <div class="placeholder-card">
-                    <div class="placeholder-line" style="width: 70%;"></div>
-                    <div class="placeholder-line short"></div>
-                    <div class="placeholder-line medium"></div>
-                </div>
-                <div class="placeholder-card">
-                    <div class="placeholder-line" style="width: 50%;"></div>
-                    <div class="placeholder-line small"></div>
-                </div>
-                <div class="launch-play-area">
-                    <button class="launch-btn" id="launchBtn">Play Smudgy Client</button>
-                </div>
-            </div>
+        <!-- ── CONTENT WRAPPER ── -->
+        <div class="content-wrapper">
+            <div class="content-panel">
 
-            <div id="settings-tab" class="tab-content">
-                <div class="content-title">Settings</div>
-                <div class="settings-group">
-                    <div class="option">
-                        <div class="left"><span>Proxy URL</span><span class="description">Select server endpoint</span></div>
-                        <select id="base_url">
-                            <option value="https://kirka.io/">kirka.io</option>
-                            <option value="https://cloudyfrogs.com/">cloudyfrogs.com</option>
-                            <option value="https://snipers.io/">snipers.io</option>
-                            <option value="https://ask101math.com/">ask101math.com</option>
-                            <option value="https://fpsiogame.com/">fpsiogame.com</option>
-                            <option value="https://cloudconverts.com/">cloudconverts.com</option>
-                        </select>
+                <!-- LAUNCH TAB -->
+                <div id="launch-tab" class="tab-content active">
+                    <div class="content-title">Launcher</div>
+                    <div class="launch-grid">
+                        <div class="launch-left">
+                            <!-- Version selector -->
+                            <div class="version-tabs">
+                                <button class="ver-tab active">0.0.6</button>
+                            </div>
+
+                            <!-- Launch button -->
+                            <button class="launch-play-btn" id="launchBtn">
+                                <i class="fas fa-play" style="font-size:0.9rem;"></i>
+                                Play Smudgy Client
+                            </button>
+
+                            <!-- Description -->
+                            <div class="client-description">
+                                Smudgy Client is a custom Electron-based Kirka.io client focused on advanced UI customization, player cosmetics, quality-of-life features, and social enhancements. Includes animated gradients, custom badges, lobby news, Discord integration, spectate tools, friend pinning, profile customization, CSS theming, in-game HUD improvements, and script/plugin support for a fully personalized experience.
+                            </div>
+
+                            <!-- Placeholder cards simulating news/stats -->
+                            <div class="placeholder-card">
+                                <div class="placeholder-line" style="width:65%;"></div>
+                                <div class="placeholder-line short"></div>
+                                <div class="placeholder-line medium"></div>
+                            </div>
+                            <div class="placeholder-card">
+                                <div class="placeholder-line" style="width:50%;"></div>
+                                <div class="placeholder-line small"></div>
+                            </div>
+                        </div>
+
+                        <!-- News panel (right column) — populated by loadNews() -->
+                        <div class="news-panel">
+                            <div class="news-panel-header">
+                                <i class="fas fa-newspaper" style="margin-right:6px;opacity:0.5;"></i>Latest News
+                            </div>
+                            <div class="news-scroll" id="newsScroll"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="settings-group">
-                    <div class="option">
-                        <div class="left"><span>Menu Toggle Keybind</span><span class="description">Customizable keybind to toggle the menu</span></div>
-                        <button class="change-keybind" id="keybindBtn">Click to set</button>
+
+                <!-- SETTINGS TAB -->
+                <div id="settings-tab" class="tab-content">
+                    <div class="content-title">Settings</div>
+                    <div class="settings-group">
+                        <div class="option">
+                            <div class="left"><span>Proxy URL</span><span class="description">Select server endpoint</span></div>
+                            <select id="base_url">
+                                <option value="https://kirka.io/">kirka.io</option>
+                                <option value="https://cloudyfrogs.com/">cloudyfrogs.com</option>
+                                <option value="https://snipers.io/">snipers.io</option>
+                                <option value="https://ask101math.com/">ask101math.com</option>
+                                <option value="https://fpsiogame.com/">fpsiogame.com</option>
+                                <option value="https://cloudconverts.com/">cloudconverts.com</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <div class="option">
+                            <div class="left"><span>Menu Toggle Keybind</span><span class="description">Customizable keybind to toggle the menu</span></div>
+                            <button class="change-keybind" id="keybindBtn">Click to set</button>
+                        </div>
+                    </div>
+                    <div class="settings-group">
+                        <div class="option">
+                            <div class="left"><span>General News</span><span class="description">Froke-related news</span></div>
+                            <div class="checkbox"><input type="checkbox" id="general_news"><label for="general_news"></label></div>
+                        </div>
+                        <div class="option">
+                            <div class="left"><span>Promotional News</span><span class="description">Live events</span></div>
+                            <div class="checkbox"><input type="checkbox" id="promotional_news"><label for="promotional_news"></label></div>
+                        </div>
+                        <div class="option">
+                            <div class="left"><span>Event News</span><span class="description">Events you can participate in</span></div>
+                            <div class="checkbox"><input type="checkbox" id="event_news"><label for="event_news"></label></div>
+                        </div>
+                        <div class="option">
+                            <div class="left"><span>Alerts</span><span class="description">Important alerts</span></div>
+                            <div class="checkbox"><input type="checkbox" id="alert_news"><label for="alert_news"></label></div>
+                        </div>
                     </div>
                 </div>
-                <div class="settings-group">
-                    <div class="option">
-                        <div class="left"><span>General News</span><span class="description">Froke-related news</span></div>
-                        <div class="checkbox"><input type="checkbox" id="general_news"><label for="general_news"></label></div>
-                    </div>
-                    <div class="option">
-                        <div class="left"><span>Promotional News</span><span class="description">Live events</span></div>
-                        <div class="checkbox"><input type="checkbox" id="promotional_news"><label for="promotional_news"></label></div>
-                    </div>
-                    <div class="option">
-                        <div class="left"><span>Event News</span><span class="description">Events you can participate in</span></div>
-                        <div class="checkbox"><input type="checkbox" id="event_news"><label for="event_news"></label></div>
-                    </div>
-                    <div class="option">
-                        <div class="left"><span>Alerts</span><span class="description">Important alerts</span></div>
-                        <div class="checkbox"><input type="checkbox" id="alert_news"><label for="alert_news"></label></div>
+
+                <!-- SCRIPTS TAB -->
+                <div id="scripts-tab" class="tab-content">
+                    <div class="content-title">Scripts</div>
+                    <div class="empty-tab">
+                        <i class="fas fa-code"></i>
+                        <p>No scripts available yet.<br>Script support coming soon.</p>
                     </div>
                 </div>
-            </div>
 
-            <div id="scripts-tab" class="tab-content">
-                <div class="content-title">Scripts</div>
-                <div class="empty-tab"><i class="fas fa-code"></i><p>No scripts available yet.<br>Script support coming soon.</p></div>
-            </div>
-
-            <div id="activity-tab" class="tab-content">
-                <div class="content-title">Activity</div>
-                <div class="empty-tab"><i class="fas fa-chart-line"></i><p>No recent activity.<br>Your game sessions will appear here.</p></div>
-            </div>
-
-            <div id="features-tab" class="tab-content">
-                <div class="content-title">Client Features</div>
-                <div class="features-grid" id="featuresGrid"></div>
-                <div id="featuresLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading features...</div>
-                <div id="featuresError" class="no-results" style="display:none;">Failed to load features list.</div>
-                <div id="featuresNoResults" class="no-results" style="display:none;">No features match your search.</div>
-            </div>
-
-            <div id="faq-tab" class="tab-content">
-                <div class="content-title">Frequently Asked Questions</div>
-                <div class="faq-list">
-                    <div class="faq-item">
-                        <div class="faq-question">Is Smudgy client safe?</div>
-                        <div class="faq-answer"><p>Yes, Smudgy client is safe because it's open source, has been helped on by many users, and is used by many users.</p></div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">Does this client use my token?</div>
-                        <div class="faq-answer"><p>Yes, we use your token for API calling only for the official Kirka API.</p></div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">Can I have a custom badge?</div>
-                        <div class="faq-answer"><p>No, they are given out at random or from giveaways. If you ask, you will be blacklisted.</p></div>
-                    </div>
-                    <div class="faq-item">
-                        <div class="faq-question">Will I get banned for using Smudgy client?</div>
-                        <div class="faq-answer"><p>Not that I'm aware of. If Xip flags something, I will take action.</p></div>
+                <!-- ACTIVITY TAB -->
+                <div id="activity-tab" class="tab-content">
+                    <div class="content-title">Activity</div>
+                    <div class="empty-tab">
+                        <i class="fas fa-chart-line"></i>
+                        <p>No recent activity.<br>Your game sessions will appear here.</p>
                     </div>
                 </div>
-            </div>
 
-            <div id="tools-tab" class="tab-content">
-                <div class="content-title">Tools & Resources</div>
-                <div class="tools-grid" id="toolsGrid"></div>
-                <div id="toolsLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading tools...</div>
-                <div id="toolsError" class="no-results" style="display:none;">Failed to load tools.</div>
-                <div id="toolsNoResults" class="no-results" style="display:none;">No tools match your search.</div>
-            </div>
-
-            <div id="otherclients-tab" class="tab-content">
-                <div class="content-title">Other Clients</div>
-                <div id="clientsGridContainer">
-                    <div class="clients-grid" id="clientsGrid"></div>
-                    <div id="clientsLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading clients...</div>
-                    <div id="clientsNoResults" class="no-results" style="display:none;">No clients found.</div>
-                    <div id="clientsError" class="no-results" style="display:none;">Failed to load clients list.</div>
+                <!-- FEATURES TAB -->
+                <div id="features-tab" class="tab-content">
+                    <div class="content-title">Client Features</div>
+                    <div class="features-grid" id="featuresGrid"></div>
+                    <div id="featuresLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading features...</div>
+                    <div id="featuresError" class="no-results" style="display:none;">Failed to load features list.</div>
+                    <div id="featuresNoResults" class="no-results" style="display:none;">No features match your search.</div>
                 </div>
-            </div>
 
-            <div id="credits-tab" class="tab-content">
-                <div class="content-title">Credits</div>
-                <div class="credits-list">
-                    <span class="title">A special thanks to these people!</span>
-                    <p>- CarrySheriff for Chest/Pack opener, Map Images Repo, Market Names, and Custom List Price</p>
-                    <p>- AwesomeSam for a basic Resource Swapper</p>
-                    <p>- Error430 for optimizations</p>
-                    <p>- robertpakalns for various bug fixes, optimizations, and tweaks</p>
-                    <p>- Irrvlo for being the og dev of the client and gave all of us something to work off. (we love you irrvlo)</p>
+                <!-- FAQ TAB -->
+                <div id="faq-tab" class="tab-content">
+                    <div class="content-title">FAQ</div>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question">Is Smudgy client safe?</div>
+                            <div class="faq-answer">Yes, Smudgy client is safe because it's open source, has been helped on by many users, and is used by many users.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Does this client use my token?</div>
+                            <div class="faq-answer">Yes, we use your token for API calling only for the official Kirka API.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Can I have a custom badge?</div>
+                            <div class="faq-answer">No, they are given out at random or from giveaways. If you ask, you will be blacklisted.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question">Will I get banned for using Smudgy client?</div>
+                            <div class="faq-answer">Not that I'm aware of. If Xip flags something, I will take action.</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+
+                <!-- TOOLS TAB -->
+                <div id="tools-tab" class="tab-content">
+                    <div class="content-title">Tools & Resources</div>
+                    <div class="tools-grid" id="toolsGrid"></div>
+                    <div id="toolsLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading tools...</div>
+                    <div id="toolsError" class="no-results" style="display:none;">Failed to load tools.</div>
+                    <div id="toolsNoResults" class="no-results" style="display:none;">No tools match your search.</div>
+                </div>
+
+                <!-- OTHER CLIENTS TAB -->
+                <div id="otherclients-tab" class="tab-content">
+                    <div class="content-title">Other Clients</div>
+                    <div id="clientsGridContainer">
+                        <div class="clients-grid" id="clientsGrid"></div>
+                        <div id="clientsLoading" class="no-results"><i class="fas fa-spinner fa-pulse"></i> Loading clients...</div>
+                        <div id="clientsNoResults" class="no-results" style="display:none;">No clients found.</div>
+                        <div id="clientsError" class="no-results" style="display:none;">Failed to load clients list.</div>
+                    </div>
+                </div>
+
+                <!-- CREDITS TAB -->
+                <div id="credits-tab" class="tab-content">
+                    <div class="content-title">Credits</div>
+                    <div class="credits-list">
+                        <span class="title">A Special Thanks To These People</span>
+                        <p>— CarrySheriff for Chest/Pack opener, Map Images Repo, Market Names, and Custom List Price</p>
+                        <p>— AwesomeSam for a basic Resource Swapper</p>
+                        <p>— Error430 for optimizations</p>
+                        <p>— robertpakalns for various bug fixes, optimizations, and tweaks</p>
+                        <p>— Irrvlo for being the og dev of the client and gave all of us something to work off. (we love you irrvlo)</p>
+                    </div>
+                </div>
+
+            </div><!-- /content-panel -->
+        </div><!-- /content-wrapper -->
+    </div><!-- /main-layout -->
+
     <div class="version-footer" id="versionDisplay">v...</div>
-</div>
+</div><!-- /launcher -->
 
-<div class="icon-layer" id="iconLayer"></div>
+<div id="iconLayer"></div>
 <div id="flashOverlay"></div>
 
 <script src="launcher.js"></script>
