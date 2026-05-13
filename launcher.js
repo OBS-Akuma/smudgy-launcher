@@ -1,6 +1,6 @@
 // Smudgy Client Launcher - Main JavaScript File
 
-// Version fetch
+// Version fetch meow
 async function fetchVersion() {
     try {
         const res = await fetch('https://raw.githubusercontent.com/OBS-Akuma/smudgy-client/refs/heads/main/package.json');
