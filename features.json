@@ -1,0 +1,121 @@
+[
+  {
+    "name": "External Scripts Loader",
+    "category": "Scripting",
+    "description": "Automatically loads external JavaScript files from a designated scripts directory",
+    "features": ["Error handling for failed script loads"]
+  },
+  {
+    "name": "Configurable Menu Keybind",
+    "category": "Controls",
+    "description": "Customizable keybind to toggle the menu with visual reminder in lobby",
+    "features": ["Dynamic keybind reminder updates when settings change", "Shows current menu keybind at bottom of lobby"]
+  },
+  {
+    "name": "News System",
+    "category": "UI",
+    "description": "Displays customizable news cards with categories and rich media",
+    "features": [
+      "General, promotional, event, alert categories",
+      "Images and badges (NEW/LIVE)",
+      "Clickable links",
+      "Fetches news data from remote repository"
+    ]
+  },
+  {
+    "name": "Discord Integration",
+    "category": "Social",
+    "description": "Replaces social button with a branded Discord invite button",
+    "features": ["Shows Discord linked and booster badges"]
+  },
+  {
+    "name": "Crosshair Settings",
+    "category": "Gameplay",
+    "description": "Persistent crosshair options for better aiming",
+    "features": ["Option to keep crosshair always visible"]
+  },
+  {
+    "name": "Chat & Interface Hiding",
+    "category": "UI",
+    "description": "Options to hide various UI elements for cleaner gameplay",
+    "features": ["Hide chat completely", "Hide kill text", "Hide entire interface", "Adjust interface opacity"]
+  },
+  {
+    "name": "Loading Screen Skip",
+    "category": "Performance",
+    "description": "Skip loading screens for faster gameplay",
+    "features": []
+  },
+  {
+    "name": "Custom Hitmarkers",
+    "category": "Visuals",
+    "description": "Replace default hitmarker with custom image",
+    "features": []
+  },
+  {
+    "name": "Custom Kill Icons",
+    "category": "Visuals",
+    "description": "Replace kill icons with custom images",
+    "features": []
+  },
+  {
+    "name": "Rave Mode",
+    "category": "Visuals",
+    "description": "Animated hue rotation effect for vibrant visuals",
+    "features": []
+  },
+  {
+    "name": "Gradient Names",
+    "category": "Customization",
+    "description": "Gradient-colored usernames with rotation angles and color stops",
+    "features": ["Optional animated gradient effects", "Displays on profile pages"]
+  },
+  {
+    "name": "UI Animation Toggle",
+    "category": "Performance",
+    "description": "Disable all UI transitions and animations",
+    "features": []
+  },
+  {
+    "name": "Spectate Button Toggle",
+    "category": "UI",
+    "description": "Toggle spectate button visibility",
+    "features": []
+  },
+  {
+    "name": "Profile Badges",
+    "category": "Social",
+    "description": "Displays player customizations on profile pages",
+    "features": ["Gradient names", "Badges", "Discord linked badges", "Booster badges"]
+  },
+  {
+    "name": "Custom Map Backgrounds",
+    "category": "Visuals",
+    "description": "Replaces server list backgrounds with custom map images",
+    "features": ["Fetches map images from remote repository"]
+  },
+  {
+    "name": "Profile Navigation",
+    "category": "Social",
+    "description": "Shift-click usernames to navigate to profiles",
+    "features": []
+  },
+  {
+    "name": "Friend Manager",
+    "category": "Social",
+    "description": "Search and filter friends by username or ID",
+    "features": ["Shift-click friend status to copy game link to clipboard"]
+  },
+  {
+    "name": "External CSS Support",
+    "category": "Customization",
+    "description": "Load custom CSS from URLs for advanced styling",
+    "features": ["Custom CSS editor", "Dynamic theme updates without page reload"]
+  },
+  {
+    "name": "Custom Notifications",
+    "category": "UI",
+    "description": "Custom styled notifications for client events",
+    "features": ["Real-time UI updates based on setting changes"]
+  }
+]
