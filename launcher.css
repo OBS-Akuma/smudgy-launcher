@@ -310,7 +310,6 @@ body {
     transform: translateX(4px);
 }
 
-/* Clients grid - compact styling */
 .clients-grid {
     display: flex;
     flex-direction: column;
