@@ -405,36 +405,6 @@ function initLaunchAnimation() {
     });
 }
 
-// ── KEYBIND ───────────────────────────────────────────────────────────────────
-
-function initKeybind() {
-    const keybindBtn = document.getElementById('keybindBtn');
-    if (!keybindBtn) return;
-
-    keybindBtn.addEventListener('click', () => {
-        keybindBtn.textContent = 'Press a key...';
-        const handler = (e) => {
-            e.preventDefault();
-            let key = e.key;
-            if (key === ' ') key = 'Space';
-            if (key === 'Escape') key = 'Esc';
-            if (key === 'Shift') key = e.location === 1 ? 'Left Shift' : (e.location === 2 ? 'Right Shift' : 'Shift');
-            else if (key === 'Control') key = e.location === 1 ? 'Left Ctrl' : (e.location === 2 ? 'Right Ctrl' : 'Ctrl');
-            else if (key === 'Alt') key = e.location === 1 ? 'Left Alt' : (e.location === 2 ? 'Right Alt' : 'Alt');
-            else if (key === 'Meta') key = e.location === 1 ? 'Left Win' : (e.location === 2 ? 'Right Win' : 'Win');
-            else if (key.length === 1) key = key.toUpperCase();
-            keybindBtn.textContent = key;
-            document.removeEventListener('keydown', handler);
-        };
-        document.addEventListener('keydown', handler, { once: true });
-        setTimeout(() => {
-            if (keybindBtn.textContent === 'Press a key...') {
-                keybindBtn.textContent = 'Click to set';
-            }
-        }, 5000);
-    });
-}
-
 // ── HELPERS ───────────────────────────────────────────────────────────────────
 
 function escapeHtml(str) {
@@ -468,17 +438,11 @@ function renderNews() {
     const newsScroll = document.getElementById('newsScroll');
     if (!newsScroll || !window._newsItems) return;
 
-    const enabledCategories = {
-        general:     document.getElementById('general_news')?.checked ?? true,
-        promotional: document.getElementById('promotional_news')?.checked ?? true,
-        event:       document.getElementById('event_news')?.checked ?? true,
-        alert:       document.getElementById('alert_news')?.checked ?? true,
-    };
-
-    const filtered = window._newsItems.filter(n => enabledCategories[n.category] !== false);
+    // Show all news - no filtering
+    const filtered = window._newsItems;
 
     if (!filtered.length) {
-        newsScroll.innerHTML = `<div class="news-empty">No news for selected categories.</div>`;
+        newsScroll.innerHTML = `<div class="news-empty">No news available.</div>`;
         return;
     }
 
@@ -534,13 +498,6 @@ async function loadNews() {
         console.error('News fetch error:', e);
         newsScroll.innerHTML = `<div class="news-empty">Failed to load news.</div>`;
     }
-}
-
-function initNewsSettings() {
-    ['general_news', 'promotional_news', 'event_news', 'alert_news'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.addEventListener('change', renderNews);
-    });
 }
 
 // ── FEATURES ──────────────────────────────────────────────────────────────────
@@ -743,11 +700,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initTabs();
     initVersionTabs();
     initLaunchAnimation();
-    initKeybind();
     initTokenModal();
     restoreSession();
     loadNews();
-    initNewsSettings();
     loadFeatures();
     loadTools();
     loadClients();
