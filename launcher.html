@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Smudgy Client Launcher</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://obs-akuma.github.io/smudgy-launcher/launcher.css">
+    <link rel="stylesheet" href="launcher.css">
 </head>
 <body>
 
@@ -38,14 +38,40 @@
             <button class="search-clear" id="searchClearBtn"><i class="fas fa-times-circle"></i></button>
         </div>
 
-        <div class="user-pill">
-            <div class="user-avatar"><i class="fas fa-user" style="font-size:0.65rem;"></i></div>
-            <div class="user-name">Guest</div>
+        <!-- User pill: shows guest or logged-in state -->
+        <div class="user-pill" id="userPill" title="Click to set token">
+            <div class="user-avatar" id="userAvatarWrap">
+                <i class="fas fa-user" style="font-size:0.65rem;" id="userAvatarIcon"></i>
+                <img id="userAvatarImg" src="" alt="" style="display:none;width:24px;height:24px;border-radius:4px;object-fit:cover;">
+            </div>
+            <div class="user-name" id="userNameDisplay">Guest</div>
+            <div class="user-level" id="userLevelDisplay" style="display:none;"></div>
         </div>
 
         <div class="win-controls">
             <button class="win-btn" title="Minimize"><i class="fas fa-minus"></i></button>
             <button class="win-btn close" title="Close"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    <!-- ── TOKEN MODAL ── -->
+    <div id="tokenModal" class="modal-backdrop" style="display:none;">
+        <div class="modal-box">
+            <div class="modal-header">
+                <span class="modal-title"><i class="fas fa-key" style="margin-right:8px;color:var(--green);"></i>Set Auth Token</span>
+                <button class="modal-close" id="tokenModalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-hint">Paste your Kirka.io JWT token below. It's used only for the official Kirka API.</p>
+                <div class="token-input-wrap">
+                    <textarea id="tokenInput" placeholder="Paste your JWT token here..." spellcheck="false"></textarea>
+                </div>
+                <div id="tokenError" class="token-error" style="display:none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn-cancel" id="tokenCancelBtn">Cancel</button>
+                <button class="modal-btn-save" id="tokenSaveBtn"><i class="fas fa-check" style="margin-right:6px;"></i>Save & Verify</button>
+            </div>
         </div>
     </div>
 
@@ -153,6 +179,21 @@
                         <div class="option">
                             <div class="left"><span>Menu Toggle Keybind</span><span class="description">Customizable keybind to toggle the menu</span></div>
                             <button class="change-keybind" id="keybindBtn">Click to set</button>
+                        </div>
+                    </div>
+                    <!-- Token setting -->
+                    <div class="settings-group">
+                        <div class="option">
+                            <div class="left"><span>Auth Token</span><span class="description">Your Kirka.io JWT token for API access</span></div>
+                            <button class="change-keybind" id="setTokenBtn" style="min-width:120px;">
+                                <i class="fas fa-key" style="margin-right:5px;font-size:0.7rem;"></i>Set Token
+                            </button>
+                        </div>
+                        <div class="option" id="tokenStatusRow" style="display:none;">
+                            <div class="left"><span style="color:#555;">Logged in as</span><span class="description" id="tokenStatusName">—</span></div>
+                            <button class="change-keybind" id="clearTokenBtn" style="min-width:100px;background:rgba(200,50,50,0.15);border-color:rgba(200,50,50,0.3);color:#ff8888;">
+                                <i class="fas fa-sign-out-alt" style="margin-right:5px;font-size:0.7rem;"></i>Log Out
+                            </button>
                         </div>
                     </div>
                     <div class="settings-group">
@@ -268,6 +309,6 @@
 <div id="iconLayer"></div>
 <div id="flashOverlay"></div>
 
-<script src="https://obs-akuma.github.io/smudgy-launcher/launcher.js"></script>
+<script src="launcher.js"></script>
 </body>
 </html>
