@@ -19,15 +19,45 @@ function decodeJwtPayload(token) {
     }
 }
 
-// Fetch the Kirka profile using the sub from JWT
+// Fetch the Kirka profile using the sub from JWT via Smudgy API (CORS-friendly)
 async function fetchKirkaProfile(token, sub) {
-    const res = await fetch('https://api2.kirka.io/api/wNmwWMWn/wWWnwmNM', {
+    // First decode the JWT to get the userId (sub) - already passed in, but we can also use it directly
+    const payload = decodeJwtPayload(token);
+    if (!payload || !payload.sub) {
+        throw new Error('Invalid token: missing user ID');
+    }
+    
+    // Use the Smudgy API endpoint that supports CORS
+    const response = await fetch('https://www.smudgy.store/api/getprofile', {
+        method: 'POST',
         headers: {
-            'Authorization': `Bearer ${token}`
-        }
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            userId: payload.sub,
+            isShortId: false
+        })
     });
-    if (!res.ok) throw new Error(`API error ${res.status}`);
-    return await res.json();
+    
+    if (!response.ok) {
+        throw new Error(`API error ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    if (!result.success || !result.data) {
+        throw new Error('Profile not found');
+    }
+    
+    // Transform the Smudgy API response to match your expected profile format
+    const profile = {
+        wMWWm: result.data.shortId || '',    // TAG (e.g. "JUICER")
+        wNmnw: result.data.name || '',        // username (e.g. "irrvlo")
+        wnNwWmMW: result.data.level || null   // level (e.g. 98)
+    };
+    
+    return profile;
 }
 
 // Apply profile data to the top-bar user pill
@@ -100,7 +130,7 @@ async function saveToken(token) {
     // Store raw token
     localStorage.setItem('smudgy_token', token);
 
-    // Fetch profile
+    // Fetch profile using the new CORS-friendly endpoint
     const profile = await fetchKirkaProfile(token, payload.sub);
     localStorage.setItem('smudgy_profile', JSON.stringify(profile));
     applyUserProfile(profile);
