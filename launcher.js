@@ -1,6 +1,217 @@
 // Smudgy Client Launcher - Main JavaScript File
 
-// Version fetch meow
+// ── TOKEN / AUTH ──────────────────────────────────────────────────────────────
+
+// Decode a JWT payload without verifying signature (client-side display only)
+function decodeJwtPayload(token) {
+    try {
+        const parts = token.trim().split('.');
+        if (parts.length !== 3) throw new Error('Not a valid JWT');
+        // base64url → base64
+        let b64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        while (b64.length % 4) b64 += '=';
+        const json = decodeURIComponent(atob(b64).split('').map(c =>
+            '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(''));
+        return JSON.parse(json);
+    } catch (e) {
+        return null;
+    }
+}
+
+// Fetch the Kirka profile using the sub from JWT
+async function fetchKirkaProfile(token, sub) {
+    const res = await fetch('https://api2.kirka.io/api/wNmwWMWn/wWWnwmNM', {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    if (!res.ok) throw new Error(`API error ${res.status}`);
+    return await res.json();
+}
+
+// Apply profile data to the top-bar user pill
+function applyUserProfile(profile) {
+    const tag    = profile.wMWWm  || '';   // e.g. "NUGGET"
+    const name   = profile.wNmnw  || '';   // e.g. "Akuma :3"
+    const level  = profile.wnNwWmMW != null ? profile.wnNwWmMW : null;
+
+    // Avatar URL: https://www.smudgy.store/api/list/profile.png?meow=TAG&v=RANDOM
+    const randV  = Math.floor(Math.random() * 9000000) + 1000000;
+    const avatarUrl = `https://www.smudgy.store/api/list/profile.png?meow=${encodeURIComponent(tag)}&v=${randV}`;
+
+    // Username format: name#TAG
+    const displayName = name && tag ? `${name}#${tag}` : (name || tag || 'Player');
+
+    const userNameDisplay   = document.getElementById('userNameDisplay');
+    const userLevelDisplay  = document.getElementById('userLevelDisplay');
+    const userAvatarIcon    = document.getElementById('userAvatarIcon');
+    const userAvatarImg     = document.getElementById('userAvatarImg');
+    const userAvatarWrap    = document.getElementById('userAvatarWrap');
+
+    if (userNameDisplay)  userNameDisplay.textContent = displayName;
+    if (userLevelDisplay && level !== null) {
+        userLevelDisplay.textContent = `Lv.${level}`;
+        userLevelDisplay.style.display = '';
+    }
+
+    if (userAvatarImg) {
+        userAvatarImg.src = avatarUrl;
+        userAvatarImg.style.display = 'block';
+        if (userAvatarIcon) userAvatarIcon.style.display = 'none';
+        // Remove green-dim background once we have a real avatar
+        if (userAvatarWrap) {
+            userAvatarWrap.style.background = 'transparent';
+            userAvatarWrap.style.border = 'none';
+        }
+    }
+
+    // Settings token status row
+    const tokenStatusRow  = document.getElementById('tokenStatusRow');
+    const tokenStatusName = document.getElementById('tokenStatusName');
+    if (tokenStatusRow)  tokenStatusRow.style.display = '';
+    if (tokenStatusName) tokenStatusName.textContent  = displayName;
+}
+
+// Reset user pill to guest state
+function resetUserPill() {
+    const userNameDisplay  = document.getElementById('userNameDisplay');
+    const userLevelDisplay = document.getElementById('userLevelDisplay');
+    const userAvatarIcon   = document.getElementById('userAvatarIcon');
+    const userAvatarImg    = document.getElementById('userAvatarImg');
+    const userAvatarWrap   = document.getElementById('userAvatarWrap');
+    const tokenStatusRow   = document.getElementById('tokenStatusRow');
+
+    if (userNameDisplay)  userNameDisplay.textContent = 'Guest';
+    if (userLevelDisplay) { userLevelDisplay.textContent = ''; userLevelDisplay.style.display = 'none'; }
+    if (userAvatarImg)    { userAvatarImg.src = ''; userAvatarImg.style.display = 'none'; }
+    if (userAvatarIcon)   userAvatarIcon.style.display = '';
+    if (userAvatarWrap)   { userAvatarWrap.style.background = ''; userAvatarWrap.style.border = ''; }
+    if (tokenStatusRow)   tokenStatusRow.style.display = 'none';
+}
+
+// Save token and trigger profile load
+async function saveToken(token) {
+    const payload = decodeJwtPayload(token);
+    if (!payload || !payload.sub) {
+        throw new Error('Invalid JWT — could not find user ID (sub) in token.');
+    }
+
+    // Store raw token
+    localStorage.setItem('smudgy_token', token);
+
+    // Fetch profile
+    const profile = await fetchKirkaProfile(token, payload.sub);
+    localStorage.setItem('smudgy_profile', JSON.stringify(profile));
+    applyUserProfile(profile);
+}
+
+// Clear saved token
+function clearToken() {
+    localStorage.removeItem('smudgy_token');
+    localStorage.removeItem('smudgy_profile');
+    resetUserPill();
+}
+
+// On startup, restore saved session
+function restoreSession() {
+    const savedProfile = localStorage.getItem('smudgy_profile');
+    if (savedProfile) {
+        try {
+            applyUserProfile(JSON.parse(savedProfile));
+        } catch(e) {
+            clearToken();
+        }
+    }
+}
+
+// ── TOKEN MODAL ───────────────────────────────────────────────────────────────
+
+function openTokenModal() {
+    const modal = document.getElementById('tokenModal');
+    const input = document.getElementById('tokenInput');
+    const errDiv = document.getElementById('tokenError');
+    if (!modal) return;
+    if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
+    if (input)  input.value = localStorage.getItem('smudgy_token') || '';
+    modal.style.display = 'flex';
+    setTimeout(() => modal.classList.add('modal-visible'), 10);
+    if (input) input.focus();
+}
+
+function closeTokenModal() {
+    const modal = document.getElementById('tokenModal');
+    if (!modal) return;
+    modal.classList.remove('modal-visible');
+    setTimeout(() => { modal.style.display = 'none'; }, 220);
+}
+
+function initTokenModal() {
+    const userPill     = document.getElementById('userPill');
+    const setTokenBtn  = document.getElementById('setTokenBtn');
+    const closeBtn     = document.getElementById('tokenModalClose');
+    const cancelBtn    = document.getElementById('tokenCancelBtn');
+    const saveBtn      = document.getElementById('tokenSaveBtn');
+    const clearTokenBtn= document.getElementById('clearTokenBtn');
+    const modal        = document.getElementById('tokenModal');
+
+    if (userPill)      userPill.addEventListener('click', openTokenModal);
+    if (setTokenBtn)   setTokenBtn.addEventListener('click', openTokenModal);
+    if (closeBtn)      closeBtn.addEventListener('click', closeTokenModal);
+    if (cancelBtn)     cancelBtn.addEventListener('click', closeTokenModal);
+
+    if (clearTokenBtn) {
+        clearTokenBtn.addEventListener('click', () => {
+            clearToken();
+        });
+    }
+
+    // Close on backdrop click
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeTokenModal();
+        });
+    }
+
+    if (saveBtn) {
+        saveBtn.addEventListener('click', async () => {
+            const input  = document.getElementById('tokenInput');
+            const errDiv = document.getElementById('tokenError');
+            const token  = input ? input.value.trim() : '';
+
+            if (!token) {
+                if (errDiv) { errDiv.textContent = 'Please paste your token first.'; errDiv.style.display = 'block'; }
+                return;
+            }
+
+            // Quick JWT shape check
+            if (token.split('.').length !== 3) {
+                if (errDiv) { errDiv.textContent = 'That doesn\'t look like a JWT. Make sure you copied the full token.'; errDiv.style.display = 'block'; }
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = '<i class="fas fa-spinner fa-pulse" style="margin-right:6px;"></i>Verifying...';
+            if (errDiv) { errDiv.style.display = 'none'; errDiv.textContent = ''; }
+
+            try {
+                await saveToken(token);
+                closeTokenModal();
+            } catch(e) {
+                if (errDiv) {
+                    errDiv.textContent = e.message || 'Failed to verify token. Check it and try again.';
+                    errDiv.style.display = 'block';
+                }
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<i class="fas fa-check" style="margin-right:6px;"></i>Save & Verify';
+            }
+        });
+    }
+}
+
+// ── VERSION ───────────────────────────────────────────────────────────────────
+
 async function fetchVersion() {
     try {
         const res = await fetch('https://raw.githubusercontent.com/OBS-Akuma/smudgy-client/refs/heads/main/package.json');
@@ -13,7 +224,8 @@ async function fetchVersion() {
     }
 }
 
-// Tab switching
+// ── TABS ──────────────────────────────────────────────────────────────────────
+
 function initTabs() {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabs = document.querySelectorAll('.tab-content');
@@ -32,7 +244,6 @@ function initTabs() {
     });
 }
 
-// Version tab selector (launch tab pill buttons)
 function initVersionTabs() {
     const verTabs = document.querySelectorAll('.ver-tab');
     verTabs.forEach(btn => {
@@ -43,7 +254,8 @@ function initVersionTabs() {
     });
 }
 
-// Launch animation — smaller fly icons (32px)
+// ── LAUNCH ANIMATION ─────────────────────────────────────────────────────────
+
 function initLaunchAnimation() {
     const launchBtn = document.getElementById('launchBtn');
     const mainUI = document.querySelector('.launcher');
@@ -163,7 +375,8 @@ function initLaunchAnimation() {
     });
 }
 
-// Keybind logic
+// ── KEYBIND ───────────────────────────────────────────────────────────────────
+
 function initKeybind() {
     const keybindBtn = document.getElementById('keybindBtn');
     if (!keybindBtn) return;
@@ -192,7 +405,8 @@ function initKeybind() {
     });
 }
 
-// Escape HTML helper
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+
 function escapeHtml(str) {
     if (!str) return '';
     return str.replace(/[&<>]/g, function(m) {
@@ -203,7 +417,6 @@ function escapeHtml(str) {
     });
 }
 
-// Format timestamp
 function formatNewsDate(ts) {
     if (!ts) return '';
     const ms = ts > 1e12 ? ts : ts * 1000;
@@ -212,7 +425,6 @@ function formatNewsDate(ts) {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
-// Category label colours
 const CATEGORY_COLORS = {
     general:     '#1A8E50',
     event:       '#c78c14',
@@ -220,7 +432,8 @@ const CATEGORY_COLORS = {
     promotional: '#3a6eb0',
 };
 
-// Render news filtered by current checkbox states
+// ── NEWS ──────────────────────────────────────────────────────────────────────
+
 function renderNews() {
     const newsScroll = document.getElementById('newsScroll');
     if (!newsScroll || !window._newsItems) return;
@@ -276,7 +489,6 @@ function renderNews() {
     }).join('');
 }
 
-// Fetch news and store globally, then render
 async function loadNews() {
     const newsScroll = document.getElementById('newsScroll');
     if (!newsScroll) return;
@@ -294,7 +506,6 @@ async function loadNews() {
     }
 }
 
-// Wire settings checkboxes -> re-render news live
 function initNewsSettings() {
     ['general_news', 'promotional_news', 'event_news', 'alert_news'].forEach(id => {
         const el = document.getElementById(id);
@@ -302,7 +513,8 @@ function initNewsSettings() {
     });
 }
 
-// Load Features from JSON
+// ── FEATURES ──────────────────────────────────────────────────────────────────
+
 async function loadFeatures() {
     const featuresGrid = document.getElementById('featuresGrid');
     const featuresLoading = document.getElementById('featuresLoading');
@@ -343,7 +555,8 @@ async function loadFeatures() {
     }
 }
 
-// Load Tools from JSON
+// ── TOOLS ─────────────────────────────────────────────────────────────────────
+
 async function loadTools() {
     const toolsGrid = document.getElementById('toolsGrid');
     const toolsLoading = document.getElementById('toolsLoading');
@@ -389,7 +602,8 @@ async function loadTools() {
     }
 }
 
-// Load Clients from JSON
+// ── CLIENTS ───────────────────────────────────────────────────────────────────
+
 async function loadClients() {
     const clientsGrid = document.getElementById('clientsGrid');
     const clientsLoading = document.getElementById('clientsLoading');
@@ -441,7 +655,8 @@ async function loadClients() {
     }
 }
 
-// Global search filtering
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+
 function initSearch() {
     const searchInput = document.getElementById('globalSearch');
     const clearBtn = document.getElementById('searchClearBtn');
@@ -457,11 +672,9 @@ function initSearch() {
         toolCards.forEach(card => {
             card.style.display = (!q || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
         });
-
         clientCards.forEach(card => {
             card.style.display = (!q || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
         });
-
         featureCards.forEach(card => {
             card.style.display = (!q || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
         });
@@ -493,13 +706,16 @@ function initSearch() {
     }
 }
 
-// Initialize everything when DOM is ready
+// ── INIT ──────────────────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', () => {
     fetchVersion();
     initTabs();
     initVersionTabs();
     initLaunchAnimation();
     initKeybind();
+    initTokenModal();
+    restoreSession();
     loadNews();
     initNewsSettings();
     loadFeatures();
